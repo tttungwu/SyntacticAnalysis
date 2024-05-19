@@ -5,9 +5,12 @@
 #ifndef CODE_PARSER_H
 #define CODE_PARSER_H
 
+#include <vector>
+#include "../../LexicalAnalysis/include/Token.h"
+
 
 class Parser {
-    static void parse();
+    static void parse(std::vector<Token>);
 };
 
 
