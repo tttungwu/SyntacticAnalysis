@@ -8,7 +8,7 @@
 std::vector<Token> LL1Parser::tokens;
 Token LL1Parser::cur_token = Token("", Type::EMPTY);
 long long LL1Parser::token_idx = 0;
-int LL1Parser::line_cnt = 0;
+int LL1Parser::line_cnt = 1;
 
 void LL1Parser::match(Type expectedType, std::string expectedValue)
 {

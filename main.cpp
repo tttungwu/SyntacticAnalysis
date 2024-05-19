@@ -11,9 +11,5 @@ int main()
 //    Error::addError(ErrorType::CodeGenError, "Invalid opcode", 4, 20);
 
     std::vector<Token> res = Lexer::tokenize("../test.txt");
-
-    for (auto token : res)
-        token.print();
-
     LL1Parser::parse(res);
 }
