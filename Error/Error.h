@@ -11,7 +11,8 @@ enum class ErrorType {
     LexicalError,
     SyntaxError,
     SemanticError,
-    CodeGenError
+    CodeGenError,
+    OtherError,
 };
 
 

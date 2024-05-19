@@ -12,6 +12,7 @@ std::string Error::getTypeString(ErrorType type) {
         case ErrorType::SyntaxError: return "Syntax Error";
         case ErrorType::SemanticError: return "Semantic Error";
         case ErrorType::CodeGenError: return "Code Generation Error";
+        case ErrorType::OtherError: return "Other Error";
         default: return "Unknown Error";
     }
 }
