@@ -2,13 +2,13 @@
 // Created by Tung Wu on 2024/5/19.
 //
 
-#include <string>
-#include <iostream>
-#include "Type.h"
-
 #ifndef CODE_TOKEN_H
 #define CODE_TOKEN_H
 
+
+#include <string>
+#include <iostream>
+#include "Type.h"
 
 class Token {
 private:

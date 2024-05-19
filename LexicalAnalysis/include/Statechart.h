@@ -2,14 +2,15 @@
 // Created by Tung Wu on 2024/5/19.
 //
 
+#ifndef CODE_STATECHART_H
+#define CODE_STATECHART_H
+
 #include <map>
 #include <vector>
 #include <string>
 #include "Token.h"
 #include "Type.h"
 
-#ifndef CODE_STATECHART_H
-#define CODE_STATECHART_H
 
 class Statechart {
 private:

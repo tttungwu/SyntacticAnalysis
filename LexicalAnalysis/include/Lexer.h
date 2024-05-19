@@ -2,6 +2,9 @@
 // Created by Tung Wu on 2024/5/19.
 //
 
+#ifndef CODE_LEXER_H
+#define CODE_LEXER_H
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,9 +12,6 @@
 #include "Token.h"
 #include "../../Error/Error.h"
 #include "Statechart.h"
-
-#ifndef CODE_LEXER_H
-#define CODE_LEXER_H
 
 
 class Lexer {

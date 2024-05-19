@@ -11,4 +11,8 @@ add_executable(code main.cpp
         LexicalAnalysis/src/Token.cpp
         Error/Error.h
         Error/Error.cpp
+        SyntacticAnalysis/include/Parser.h
+        SyntacticAnalysis/src/Parser.cpp
+        SyntacticAnalysis/include/LL1Parser.h
+        SyntacticAnalysis/src/LL1Parser.cpp
 )
