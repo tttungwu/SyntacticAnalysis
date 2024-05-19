@@ -27,16 +27,16 @@ std::vector<Token> Lexer::scanLine(std::string line)
     return tokens;
 }
 
-std::vector<std::vector<Token>> Lexer::tokenize(const std::string &filename)
+std::vector<Token> Lexer::tokenize(const std::string &filename)
 {
     std::ifstream file(filename);
     if (!file.is_open()) Error::printErrors(ErrorType::OtherError, "Could not open the file \"" + filename + "\".");
 
-    std::vector<std::vector<Token>> tokens;
+    std::vector<Token> tokens;
     std::string line;
     while (std::getline(file, line)) {
         std::vector<Token> lineTokens = Lexer::scanLine(line);
-        tokens.push_back(lineTokens);
+        tokens.insert(tokens.end(), lineTokens.begin(), lineTokens.end());
     }
 
     return tokens;

@@ -16,7 +16,7 @@
 
 class Lexer {
 public:
-    static std::vector<std::vector<Token>> tokenize(const std::string &filename);
+    static std::vector<Token> tokenize(const std::string &filename);
 
 private:
     static std::vector<Token> scanLine(std::string line);

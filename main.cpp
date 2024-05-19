@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "LexicalAnalysis/include/Lexer.h"
+#include "SyntacticAnalysis/include/LL1Parser.h"
 
 int main()
 {
@@ -9,5 +10,10 @@ int main()
 //    Error::addError(ErrorType::SemanticError, "Undeclared variable", 3, 15);
 //    Error::addError(ErrorType::CodeGenError, "Invalid opcode", 4, 20);
 
-    std::vector<std::vector<Token>> res = Lexer::tokenize("../test.txt");
+    std::vector<Token> res = Lexer::tokenize("../test.txt");
+
+    for (auto token : res)
+        token.print();
+
+    LL1Parser::parse(res);
 }

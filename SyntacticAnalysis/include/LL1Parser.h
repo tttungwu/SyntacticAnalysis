@@ -15,7 +15,7 @@ public:
 
 private:
     static std::vector<Token> tokens;   // 等待处理的所有token
-    static Token cur_tokens;    // 当前将处理的token
+    static Token cur_token;    // 当前将处理的token
     static long long token_idx;     // 当前将处理的token在所有token中的下标
     static int line_cnt;      // 当前处理的行
 
