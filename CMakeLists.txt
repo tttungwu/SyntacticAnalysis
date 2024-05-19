@@ -9,4 +9,6 @@ add_executable(code main.cpp
         LexicalAnalysis/include/Statechart.h
         LexicalAnalysis/src/Statechart.cpp
         LexicalAnalysis/src/Token.cpp
+        Error/Error.h
+        Error/Error.cpp
 )
