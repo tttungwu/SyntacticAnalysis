@@ -1,0 +1,3 @@
+/Users/tungwu/me/Material/undergraduate/编译技术/experiment/exp2/code/cmake-build-debug/CMakeFiles/code.dir
+/Users/tungwu/me/Material/undergraduate/编译技术/experiment/exp2/code/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/tungwu/me/Material/undergraduate/编译技术/experiment/exp2/code/cmake-build-debug/CMakeFiles/rebuild_cache.dir
