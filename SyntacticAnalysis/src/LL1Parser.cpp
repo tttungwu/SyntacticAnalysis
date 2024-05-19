@@ -3,3 +3,9 @@
 //
 
 #include "../include/LL1Parser.h"
+
+
+void LL1Parser::parse()
+{
+
+}

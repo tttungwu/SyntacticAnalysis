@@ -7,7 +7,7 @@
 
 
 class Parser {
-    virtual void parse() = 0;
+    static void parse();
 };
 
 

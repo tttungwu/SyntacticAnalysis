@@ -9,7 +9,7 @@
 
 
 class LL1Parser : public Parser {
-
+    static void parse();
 };
 
 

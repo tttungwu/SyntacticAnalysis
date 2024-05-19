@@ -85,11 +85,11 @@ build CMakeFiles/code.dir/SyntacticAnalysis/src/Parser.cpp.o: CXX_COMPILER__code
   OBJECT_DIR = CMakeFiles/code.dir
   OBJECT_FILE_DIR = CMakeFiles/code.dir/SyntacticAnalysis/src
 
-build CMakeFiles/code.dir/SyntacticAnalysis/include/LL1Parser.cpp.o: CXX_COMPILER__code_unscanned_Debug /Users/tungwu/me/Material/undergraduate/编译技术/experiment/exp2/code/SyntacticAnalysis/include/LL1Parser.cpp || cmake_object_order_depends_target_code
-  DEP_FILE = CMakeFiles/code.dir/SyntacticAnalysis/include/LL1Parser.cpp.o.d
+build CMakeFiles/code.dir/SyntacticAnalysis/src/LL1Parser.cpp.o: CXX_COMPILER__code_unscanned_Debug /Users/tungwu/me/Material/undergraduate/编译技术/experiment/exp2/code/SyntacticAnalysis/src/LL1Parser.cpp || cmake_object_order_depends_target_code
+  DEP_FILE = CMakeFiles/code.dir/SyntacticAnalysis/src/LL1Parser.cpp.o.d
   FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.7 -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/code.dir
-  OBJECT_FILE_DIR = CMakeFiles/code.dir/SyntacticAnalysis/include
+  OBJECT_FILE_DIR = CMakeFiles/code.dir/SyntacticAnalysis/src
 
 
 # =============================================================================
@@ -99,7 +99,7 @@ build CMakeFiles/code.dir/SyntacticAnalysis/include/LL1Parser.cpp.o: CXX_COMPILE
 #############################################
 # Link the executable code
 
-build code: CXX_EXECUTABLE_LINKER__code_Debug CMakeFiles/code.dir/main.cpp.o CMakeFiles/code.dir/LexicalAnalysis/src/Lexer.cpp.o CMakeFiles/code.dir/LexicalAnalysis/src/Statechart.cpp.o CMakeFiles/code.dir/LexicalAnalysis/src/Token.cpp.o CMakeFiles/code.dir/Error/Error.cpp.o CMakeFiles/code.dir/SyntacticAnalysis/src/Parser.cpp.o CMakeFiles/code.dir/SyntacticAnalysis/include/LL1Parser.cpp.o
+build code: CXX_EXECUTABLE_LINKER__code_Debug CMakeFiles/code.dir/main.cpp.o CMakeFiles/code.dir/LexicalAnalysis/src/Lexer.cpp.o CMakeFiles/code.dir/LexicalAnalysis/src/Statechart.cpp.o CMakeFiles/code.dir/LexicalAnalysis/src/Token.cpp.o CMakeFiles/code.dir/Error/Error.cpp.o CMakeFiles/code.dir/SyntacticAnalysis/src/Parser.cpp.o CMakeFiles/code.dir/SyntacticAnalysis/src/LL1Parser.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.7
   OBJECT_DIR = CMakeFiles/code.dir
   POST_BUILD = :
