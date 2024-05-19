@@ -21,10 +21,10 @@ void LL1Parser::match(Type expectedType, std::string expectedValue)
             ++ LL1Parser::token_idx;
             LL1Parser::cur_token = Token("", Type::EMPTY);
             if (LL1Parser::token_idx > LL1Parser::tokens.size())
-                Error::printErrors(ErrorType::SyntaxError, "Missing tokens", true, LL1Parser::line_cnt);
+                Error::printErrors(ErrorType::SyntaxError, "match: Missing tokens", true, LL1Parser::line_cnt);
         }
     }
-    else Error::printErrors(ErrorType::SyntaxError, "Ungrammatical", true, LL1Parser::line_cnt);
+    else Error::printErrors(ErrorType::SyntaxError, "match: Ungrammatical", true, LL1Parser::line_cnt);
 }
 
 void LL1Parser::parse(std::vector<Token> tokens)
@@ -50,7 +50,7 @@ void LL1Parser::parseK()
 {
     if (LL1Parser::cur_token.getType() == Type::EMPTY) return;
     LL1Parser::parseS();
-    LL1Parser::match(Type::SIGN, ";");
+    LL1Parser::match(Type::PERIOD, ";");
     ++ LL1Parser::line_cnt;
     LL1Parser::parseK();
 }
@@ -71,7 +71,14 @@ void LL1Parser::parseS()
         parseS();
         parseA();
     }
-    else Error::printErrors(ErrorType::SyntaxError, "Ungrammatical", true,LL1Parser::line_cnt);
+    else if (LL1Parser::cur_token.getValue() == "while")
+    {
+        LL1Parser::match(Type::KEYWORDS, "while");
+        LL1Parser::parseC();
+        LL1Parser::match(Type::KEYWORDS, "do");
+        LL1Parser::parseS();
+    }
+    else Error::printErrors(ErrorType::SyntaxError, "parseS: Ungrammatical", true,LL1Parser::line_cnt);
 }
 
 void LL1Parser::parseA()
@@ -97,7 +104,7 @@ void LL1Parser::parseB()
         LL1Parser::match(Type::SIGN);
         parseE();
     }
-    else Error::printErrors(ErrorType::SyntaxError, "Ungrammatical", true,LL1Parser::line_cnt);
+    else Error::printErrors(ErrorType::SyntaxError, "parseB: Ungrammatical", true,LL1Parser::line_cnt);
 }
 
 void LL1Parser::parseE()
@@ -158,5 +165,5 @@ void LL1Parser::parseF()
     {
         LL1Parser::match(Type::HEXADECIMAL);
     }
-    else Error::printErrors(ErrorType::SyntaxError, "Ungrammatical", true,LL1Parser::line_cnt);
+    else Error::printErrors(ErrorType::SyntaxError, "parseF: Ungrammatical", true,LL1Parser::line_cnt);
 }

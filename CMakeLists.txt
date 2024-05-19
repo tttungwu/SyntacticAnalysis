@@ -15,4 +15,6 @@ add_executable(code main.cpp
         SyntacticAnalysis/src/Parser.cpp
         SyntacticAnalysis/include/LL1Parser.h
         SyntacticAnalysis/src/LL1Parser.cpp
+        SyntacticAnalysis/Visualization/NTree.h
+        SyntacticAnalysis/Visualization/NTree.cpp
 )
