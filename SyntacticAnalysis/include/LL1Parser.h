@@ -7,6 +7,15 @@
 
 #include "Parser.h"
 #include "../../Error/Error.h"
+#include "../Visualization/NTree.h"
+
+#define USE_VISUALIZATION
+
+#ifdef USE_VISUALIZATION
+using ReturnType = NTree*;
+#else
+using ReturnType = void;
+#endif
 
 
 class LL1Parser : public Parser {
@@ -20,17 +29,17 @@ private:
     static int line_cnt;      // 当前处理的行
 
     // 分别处理不同的非终结符
-    static void parseP();
-    static void parseK();
-    static void parseS();
-    static void parseA();
-    static void parseC();
-    static void parseE();
-    static void parseB();
-    static void parseT();
-    static void parseD();
-    static void parseF();
-    static void parseG();
+    static ReturnType parseP();
+    static ReturnType parseK();
+    static ReturnType parseS();
+    static ReturnType parseA();
+    static ReturnType parseC();
+    static ReturnType parseE();
+    static ReturnType parseB();
+    static ReturnType parseT();
+    static ReturnType parseD();
+    static ReturnType parseF();
+    static ReturnType parseG();
 
     static void match(Type expectedType, std::string expectedValue = "");    // 处理当前token并找到下一个token
 };

@@ -11,11 +11,12 @@
 
 
 class NTree {
+public:
     NTree(){};
     NTree(std::string val) : val(val){}
 
     static void printNTree(NTree* x, std::vector<bool> flag, int depth = 0, bool isLast = false);
-
+    void append(NTree* son);
 
 private:
     std::string val;
