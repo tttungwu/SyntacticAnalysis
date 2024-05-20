@@ -5,6 +5,8 @@
 #ifndef CODE_LL1PARSER_H
 #define CODE_LL1PARSER_H
 
+#include <sstream>
+#include <regex>
 #include "Parser.h"
 #include "../../Error/Error.h"
 #include "../Visualization/NTree.h"

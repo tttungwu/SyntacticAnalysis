@@ -45,7 +45,26 @@ void LL1Parser::parse(std::vector<Token> tokens)
     NTree* root = LL1Parser::parseP(p);
     std::vector<bool> flag(30, true);
     NTree::printNTree(root, flag);
-    std::cout << "IR: \n" << p->code << std::endl;
+    auto formatPrint = [](std::string str) -> std::string {
+        std::istringstream codeStream(str);
+        std::string line;
+        std::vector<std::string> lines;
+        std::string indent = "    ";  // 4个空格的缩进
+        while (std::getline(codeStream, line)) {
+            lines.push_back(line);
+        }
+        std::ostringstream formattedCode;
+        auto startsWithLabel = [](const std::string& line) -> bool {
+            std::regex labelRegex("^L[0-9]+:");
+            return std::regex_search(line, labelRegex);
+        };
+        for (const auto& line : lines) {
+            if (startsWithLabel(line)) formattedCode << line << "\n";
+            else formattedCode << indent << line << "\n";
+        }
+        return formattedCode.str();
+    };
+    std::cout << "IR: \n" << formatPrint(p->code) << std::endl;
 #endif
 }
 
