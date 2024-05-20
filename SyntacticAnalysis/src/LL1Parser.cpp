@@ -205,9 +205,13 @@ ReturnType LL1Parser::parseC(C *c)
     LL1Parser::parseB();
 #else
     NTree* root = new NTree("C"), *son;
-    son = LL1Parser::parseE();
+    E *e = new E();
+    son = LL1Parser::parseE(e);
     root->append(son);
-    son = LL1Parser::parseB();
+    B *b = new B();
+    b->code = e->code, b->place = e->place;
+    son = LL1Parser::parseB(b);
+    c->code = b->code;
     root->append(son);
     return root;
 #endif
@@ -222,10 +226,13 @@ ReturnType LL1Parser::parseB(B *b)
         parseE();
 #else
         NTree* root = new NTree("B"), *son;
+        std::string symbo = LL1Parser::cur_token.getValue();
         son = new NTree(LL1Parser::cur_token.getValue());
         LL1Parser::match(Type::SIGN);
         root->append(son);
-        son = parseE();
+        E *e = new E();
+        son = parseE(e);
+        b->code = b->code + e->code + b->place + symbo + e->place + "\n";
         root->append(son);
         return root;
 #endif

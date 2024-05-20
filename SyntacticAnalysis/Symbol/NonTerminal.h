@@ -42,7 +42,8 @@ public:
 };
 
 class B : public NonTerminal{
-
+public:
+    std::string place;
 };
 
 class T : public NonTerminal{
