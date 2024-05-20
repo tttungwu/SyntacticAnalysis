@@ -41,25 +41,29 @@ void LL1Parser::parse(std::vector<Token> tokens)
 #ifndef USE_VISUALIZATION
     LL1Parser::parseP();
 #else
-    NTree* root = LL1Parser::parseP();
+    P *p = new P();
+    NTree* root = LL1Parser::parseP(p);
     std::vector<bool> flag(30, true);
     NTree::printNTree(root, flag);
+    std::cout << "IR: \n" << p->code << std::endl;
 #endif
 }
 
-ReturnType LL1Parser::parseP()
+ReturnType LL1Parser::parseP(P *p)
 {
 #ifndef USE_VISUALIZATION
     LL1Parser::parseK();
 #else
-    NTree* root = new NTree("S");
-    NTree* son = parseK();
+    NTree* root = new NTree("P");
+    K *k = new K();
+    NTree* son = parseK(k);
+    p->code = k->code;
     root->append(son);
     return root;
 #endif
 }
 
-ReturnType LL1Parser::parseK()
+ReturnType LL1Parser::parseK(K *k)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getType() == Type::EMPTY) return;
@@ -71,25 +75,29 @@ ReturnType LL1Parser::parseK()
     NTree* root = new NTree("K"), *son;
     if (LL1Parser::cur_token.getType() == Type::EMPTY)
     {
+        k->code = "\n";
         son = new NTree("ε");
         root->append(son);
     }
     else
     {
-        son = LL1Parser::parseS();
+        S *s = new S();
+        son = LL1Parser::parseS(s);
         root->append(son);
         LL1Parser::match(Type::PERIOD, ";");
         son = new NTree(";");
         root->append(son);
         ++ LL1Parser::line_cnt;
-        son = LL1Parser::parseK();
+        K *k1 = new K();
+        son = LL1Parser::parseK(k1);
+        k->code = s->code + k1->code + "\n";
         root->append(son);
     }
     return root;
 #endif
 }
 
-ReturnType LL1Parser::parseS()
+ReturnType LL1Parser::parseS(S *s)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getType() == Type::IDN)
@@ -118,13 +126,16 @@ ReturnType LL1Parser::parseS()
     NTree* root = new NTree("S"), *son;
     if (LL1Parser::cur_token.getType() == Type::IDN)
     {
+        std::string idPlace = cur_token.getValue();
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::IDN);
         son = new NTree(LL1Parser::cur_token.getValue());
         LL1Parser::match(Type::SIGN, "=");
-        son = parseE();
+        E *e = new E();
+        son = parseE(e);
         root->append(son);
+        s->code = e->code + idPlace + ":=" + e->place + "\n";
     }
     else if (LL1Parser::cur_token.getValue() == "if")
     {
@@ -159,7 +170,7 @@ ReturnType LL1Parser::parseS()
 #endif
 }
 
-ReturnType LL1Parser::parseA()
+ReturnType LL1Parser::parseA(A *a)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getValue() == "else")
@@ -187,7 +198,7 @@ ReturnType LL1Parser::parseA()
 #endif
 }
 
-ReturnType LL1Parser::parseC()
+ReturnType LL1Parser::parseC(C *c)
 {
 #ifndef USE_VISUALIZATION
     LL1Parser::parseE();
@@ -202,7 +213,7 @@ ReturnType LL1Parser::parseC()
 #endif
 }
 
-ReturnType LL1Parser::parseB()
+ReturnType LL1Parser::parseB(B *b)
 {
     if (LL1Parser::cur_token.getValue() == "=" || LL1Parser::cur_token.getValue() == "<" || LL1Parser::cur_token.getValue() == ">")
     {
@@ -222,22 +233,26 @@ ReturnType LL1Parser::parseB()
     else Error::printErrors(ErrorType::SyntaxError, "parseB: Ungrammatical", true,LL1Parser::line_cnt);
 }
 
-ReturnType LL1Parser::parseE()
+ReturnType LL1Parser::parseE(E *e)
 {
 #ifndef USE_VISUALIZATION
     LL1Parser::parseT();
     LL1Parser::parseD();
 #else
     NTree* root = new NTree("E"), *son;
-    son = LL1Parser::parseT();
+    T *t = new T();
+    son = LL1Parser::parseT(t);
     root->append(son);
-    son = LL1Parser::parseD();
+    D *d = new D();
+    d->icode = t->code, d->iplace = t->place;
+    son = LL1Parser::parseD(d);
+    e->code = d->code, e->place = d->place;
     root->append(son);
     return root;
 #endif
 }
 
-ReturnType LL1Parser::parseD()
+ReturnType LL1Parser::parseD(D *d)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getValue() == "-" || LL1Parser::cur_token.getValue() == "+")
@@ -251,39 +266,51 @@ ReturnType LL1Parser::parseD()
     NTree* root = new NTree("D"), *son;
     if (LL1Parser::cur_token.getValue() == "-" || LL1Parser::cur_token.getValue() == "+")
     {
+        d->place = NonTerminal::newtemp();
+        std::string symbo = LL1Parser::cur_token.getValue();
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::SIGN, LL1Parser::cur_token.getValue());
-        son = LL1Parser::parseT();
+        T *t1 = new T();
+        son = LL1Parser::parseT(t1);
         root->append(son);
-        son = LL1Parser::parseD();
+        D *d1 = new D();
+        d1->icode = d->icode + t1->code + d->place + ":=" + d->iplace + symbo + t1->place + "\n";
+        d1->iplace = d->place;
+        son = LL1Parser::parseD(d1);
         root->append(son);
+        d->code = d1->code, d->place = d1->place;
     }
     else
     {
         son = new NTree("ε");
         root->append(son);
+        d->code = d->icode, d->place = d->iplace;
     }
     return root;
 #endif
 }
 
-ReturnType LL1Parser::parseT()
+ReturnType LL1Parser::parseT(T *t)
 {
 #ifndef USE_VISUALIZATION
     LL1Parser::parseF();
     LL1Parser::parseG();
 #else
     NTree* root = new NTree("T"), *son;
-    son = LL1Parser::parseF();
+    F *f = new F();
+    son = LL1Parser::parseF(f);
     root->append(son);
-    son = LL1Parser::parseG();
+    G *g = new G();
+    g->icode = f->code, g->iplace = f->place;
+    son = LL1Parser::parseG(g);
+    t->code = g->code, t->place = g->place;
     root->append(son);
     return root;
 #endif
 }
 
-ReturnType LL1Parser::parseG()
+ReturnType LL1Parser::parseG(G *g)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getValue() == "*" || LL1Parser::cur_token.getValue() == "/")
@@ -297,24 +324,32 @@ ReturnType LL1Parser::parseG()
     NTree* root = new NTree("G"), *son;
     if (LL1Parser::cur_token.getValue() == "*" || LL1Parser::cur_token.getValue() == "/")
     {
+        g->place = NonTerminal::newtemp();
+        std::string symbo = LL1Parser::cur_token.getValue();
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::SIGN, LL1Parser::cur_token.getValue());
-        son = LL1Parser::parseF();
+        F *f1 = new F();
+        son = LL1Parser::parseF(f1);
         root->append(son);
-        son = LL1Parser::parseG();
+        G *g1 = new G();
+        g1->icode = g->icode + f1->code + g->place + ":=" + g->iplace + symbo + f1->place + "\n";
+        g1->iplace = g->place;
+        son = LL1Parser::parseG(g1);
         root->append(son);
+        g->code = g1->code, g->place = g1->place;
     }
     else
     {
         son = new NTree("ε");
         root->append(son);
+        g->code = g->icode, g->place = g->iplace;
     }
     return root;
 #endif
 }
 
-ReturnType LL1Parser::parseF()
+ReturnType LL1Parser::parseF(F* f)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getValue() == "(")
@@ -347,7 +382,9 @@ ReturnType LL1Parser::parseF()
         son = new NTree("(");
         root->append(son);
         LL1Parser::match(Type::SIGN, "(");
-        son = LL1Parser::parseE();
+        E *e = new E();
+        son = LL1Parser::parseE(e);
+        f->place = e->place, f->code = e->code;
         root->append(son);
         son = new NTree(")");
         root->append(son);
@@ -355,24 +392,30 @@ ReturnType LL1Parser::parseF()
     }
     else if (LL1Parser::cur_token.getType() == Type::IDN)
     {
+        f->place = cur_token.getValue(), f->code = "";
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::IDN);
     }
     else if (LL1Parser::cur_token.getType() == Type::OCTAL)
     {
+        std::string temp = cur_token.getValue();
+        temp.erase(1, 1);
+        f->place = std::to_string(std::stoi(temp, nullptr, 8)), f->code = "";
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::OCTAL);
     }
     else if (LL1Parser::cur_token.getType() == Type::DECIMAL)
     {
+        f->place = std::to_string(std::stoi(cur_token.getValue(), nullptr, 10)), f->code = "";
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::DECIMAL);
     }
     else if (LL1Parser::cur_token.getType() == Type::HEXADECIMAL)
     {
+        f->place = std::to_string(std::stoi(cur_token.getValue(), nullptr, 16)), f->code = "";
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::HEXADECIMAL);

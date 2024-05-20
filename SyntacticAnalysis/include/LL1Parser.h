@@ -8,6 +8,7 @@
 #include "Parser.h"
 #include "../../Error/Error.h"
 #include "../Visualization/NTree.h"
+#include "../Symbol/NonTerminal.h"
 
 #define USE_VISUALIZATION
 
@@ -29,17 +30,17 @@ private:
     static int line_cnt;      // 当前处理的行
 
     // 分别处理不同的非终结符
-    static ReturnType parseP();
-    static ReturnType parseK();
-    static ReturnType parseS();
-    static ReturnType parseA();
-    static ReturnType parseC();
-    static ReturnType parseE();
-    static ReturnType parseB();
-    static ReturnType parseT();
-    static ReturnType parseD();
-    static ReturnType parseF();
-    static ReturnType parseG();
+    static ReturnType parseP(P *p = nullptr);
+    static ReturnType parseK(K *k = nullptr);
+    static ReturnType parseS(S *s = nullptr);
+    static ReturnType parseA(A *a = nullptr);
+    static ReturnType parseC(C *c = nullptr);
+    static ReturnType parseE(E *e = nullptr);
+    static ReturnType parseB(B *b = nullptr);
+    static ReturnType parseT(T *t = nullptr);
+    static ReturnType parseD(D *d = nullptr);
+    static ReturnType parseF(F *f = nullptr);
+    static ReturnType parseG(G *G = nullptr);
 
     static void match(Type expectedType, std::string expectedValue = "");    // 处理当前token并找到下一个token
 };
