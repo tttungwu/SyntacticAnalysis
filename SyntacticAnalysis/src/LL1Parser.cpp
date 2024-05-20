@@ -63,7 +63,7 @@ ReturnType LL1Parser::parseP(P *p)
 #endif
 }
 
-ReturnType LL1Parser::parseK(K *k)
+ReturnType LL1Parser::parseK(K *k, S *pre_s)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getType() == Type::EMPTY) return;
@@ -75,13 +75,16 @@ ReturnType LL1Parser::parseK(K *k)
     NTree* root = new NTree("K"), *son;
     if (LL1Parser::cur_token.getType() == Type::EMPTY)
     {
-        k->code = "\n";
+        k->code = "";
+        if (pre_s != nullptr) k->code = pre_s->next + ": \n";
         son = new NTree("ε");
         root->append(son);
     }
     else
     {
         S *s = new S();
+        s->next = NonTerminal::newlabel();
+        if (pre_s != nullptr) s->begin = pre_s->next;
         son = LL1Parser::parseS(s);
         root->append(son);
         LL1Parser::match(Type::PERIOD, ";");
@@ -89,8 +92,8 @@ ReturnType LL1Parser::parseK(K *k)
         root->append(son);
         ++ LL1Parser::line_cnt;
         K *k1 = new K();
-        son = LL1Parser::parseK(k1);
-        k->code = s->code + k1->code + "\n";
+        son = LL1Parser::parseK(k1, s);
+        k->code = s->code + k1->code;
         root->append(son);
     }
     return root;
@@ -135,42 +138,59 @@ ReturnType LL1Parser::parseS(S *s)
         E *e = new E();
         son = parseE(e);
         root->append(son);
-        s->code = e->code + idPlace + ":=" + e->place + "\n";
+        s->code = (!s->begin.empty() ? s->begin + ": " : "") + e->code + idPlace + ":=" + e->place + "\n";
     }
     else if (LL1Parser::cur_token.getValue() == "if")
     {
+        if (s->begin.empty()) s->begin = NonTerminal::newlabel();
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::KEYWORDS, "if");
-        son = parseC();
+        C *c = new C();
+        c->t_label = NonTerminal::newlabel();
+        c->f_label = "L_";
+        son = parseC(c);
         root->append(son);
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::KEYWORDS, "then");
-        son = parseS();
+        S *s1 = new S();
+        s1->next = s->next;
+        s1->begin = c->t_label;
+        son = parseS(s1);
         root->append(son);
-        son = parseA();
+        A *a = new A();
+        son = parseA(a, s, c, s1);
+        s->code = a->code;
         root->append(son);
     }
     else if (LL1Parser::cur_token.getValue() == "while")
     {
+        if (s->begin.empty()) s->begin = NonTerminal::newlabel();
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::KEYWORDS, "while");
-        son = LL1Parser::parseC();
+        C *c = new C();
+        c->t_label = NonTerminal::newlabel();
+        c->f_label = s->next;
+        son = LL1Parser::parseC(c);
         root->append(son);
         son = new NTree(LL1Parser::cur_token.getValue());
         root->append(son);
         LL1Parser::match(Type::KEYWORDS, "do");
-        son = LL1Parser::parseS();
+        S *s1 = new S();
+        s1->next = s->begin;
+        s1->begin = c->t_label;
+        son = LL1Parser::parseS(s1);
         root->append(son);
+        s->code = s->begin + ": " + c->code + s1->code + "goto " + s1->next + "\n";
     }
     else Error::printErrors(ErrorType::SyntaxError, "parseS: Ungrammatical", true,LL1Parser::line_cnt);
     return root;
 #endif
 }
 
-ReturnType LL1Parser::parseA(A *a)
+ReturnType LL1Parser::parseA(A *a, S *s, C *c, S *s1)
 {
 #ifndef USE_VISUALIZATION
     if (LL1Parser::cur_token.getValue() == "else")
@@ -180,19 +200,33 @@ ReturnType LL1Parser::parseA(A *a)
     }
     else return;
 #else
+    const static std::string toReplace = "L_";
     NTree *root = new NTree("A"), *son;
+    std::size_t pos = c->code.find(toReplace);
     if (LL1Parser::cur_token.getValue() == "else")
     {
+        c->f_label = NonTerminal::newlabel();
         son = new NTree("else");
         root->append(son);
         LL1Parser::match(Type::KEYWORDS, "else");
-        son = parseS();
+        S *s2 = new S();
+        s2->next = s->next;
+        son = parseS(s2);
         root->append(son);
+        if (pos != std::string::npos) { // 如果找到了
+            c->code.replace(pos, toReplace.length(), c->f_label); // 进行替换
+        }
+        a->code = s->begin + ": " + c->code + s1->code + "goto " + s1->next + "\n";
+        a->code = a->code + c->f_label + ": " + s2->code;
     }
     else
     {
         son = new NTree("ε");
         root->append(son);
+        if (pos != std::string::npos) { // 如果找到了
+            c->code.replace(pos, toReplace.length(), s->next); // 进行替换
+        }
+        a->code = s->begin + ": " + c->code + s1->code;
     }
     return root;
 #endif
@@ -210,6 +244,7 @@ ReturnType LL1Parser::parseC(C *c)
     root->append(son);
     B *b = new B();
     b->code = e->code, b->place = e->place;
+    b->t_label = c->t_label, b->f_label = c->f_label;
     son = LL1Parser::parseB(b);
     c->code = b->code;
     root->append(son);
@@ -232,7 +267,8 @@ ReturnType LL1Parser::parseB(B *b)
         root->append(son);
         E *e = new E();
         son = parseE(e);
-        b->code = b->code + e->code + b->place + symbo + e->place + "\n";
+        b->code = b->code + e->code + "if " + b->place + " " + symbo + " " + e->place + " goto " + b->t_label + "\n";
+        b->code = b->code + "goto " + b->f_label + "\n";
         root->append(son);
         return root;
 #endif
@@ -282,7 +318,7 @@ ReturnType LL1Parser::parseD(D *d)
         son = LL1Parser::parseT(t1);
         root->append(son);
         D *d1 = new D();
-        d1->icode = d->icode + t1->code + d->place + ":=" + d->iplace + symbo + t1->place + "\n";
+        d1->icode = d->icode + t1->code + d->place + " := " + d->iplace + " " + symbo + " " + t1->place + "\n";
         d1->iplace = d->place;
         son = LL1Parser::parseD(d1);
         root->append(son);
@@ -340,7 +376,7 @@ ReturnType LL1Parser::parseG(G *g)
         son = LL1Parser::parseF(f1);
         root->append(son);
         G *g1 = new G();
-        g1->icode = g->icode + f1->code + g->place + ":=" + g->iplace + symbo + f1->place + "\n";
+        g1->icode = g->icode + f1->code + g->place + " := " + g->iplace + " " + symbo + " " + f1->place + "\n";
         g1->iplace = g->place;
         son = LL1Parser::parseG(g1);
         root->append(son);

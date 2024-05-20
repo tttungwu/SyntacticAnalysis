@@ -31,9 +31,9 @@ private:
 
     // 分别处理不同的非终结符
     static ReturnType parseP(P *p = nullptr);
-    static ReturnType parseK(K *k = nullptr);
+    static ReturnType parseK(K *k = nullptr, S *s = nullptr);
     static ReturnType parseS(S *s = nullptr);
-    static ReturnType parseA(A *a = nullptr);
+    static ReturnType parseA(A *a = nullptr, S *s = nullptr, C *c = nullptr, S *s1 = nullptr);
     static ReturnType parseC(C *c = nullptr);
     static ReturnType parseE(E *e = nullptr);
     static ReturnType parseB(B *b = nullptr);

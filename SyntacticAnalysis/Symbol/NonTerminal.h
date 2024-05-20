@@ -25,7 +25,8 @@ class K : public NonTerminal{
 };
 
 class S : public NonTerminal{
-
+public:
+    std::string begin, next;
 };
 
 class A : public NonTerminal{
@@ -33,7 +34,8 @@ class A : public NonTerminal{
 };
 
 class C : public NonTerminal{
-
+public:
+    std::string t_label, f_label;
 };
 
 class E : public NonTerminal{
@@ -44,6 +46,7 @@ public:
 class B : public NonTerminal{
 public:
     std::string place;
+    std::string t_label, f_label;
 };
 
 class T : public NonTerminal{
